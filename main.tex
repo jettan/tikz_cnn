@@ -47,6 +47,7 @@
 		}
 
 		% INPUT
+		\node[] (input image) at (-3.75,0.5) {\includegraphics[height=30mm]{lenna.png}};
 		\networkLayer{3.0}{0.03}{-0.5}{color=gray!80}{}
 
 		% ENCODER
@@ -75,6 +76,7 @@
 
 		% OUTPUT
 		\networkLayer{3.0}{0.05}{17}{color=red!40}{}{}          % Pixelwise segmentation with classes.
+		\node[] (output image) at (18,0.5) {\includegraphics[height=30mm]{vermeer.jpg}};
 
 
 	\end{tikzpicture}
