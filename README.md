@@ -7,4 +7,4 @@ Example output:
 ![](output.png?raw=true)
 
 Example output for Z:
-![](output.png?raw=true)
+![](output_z.png?raw=true)
