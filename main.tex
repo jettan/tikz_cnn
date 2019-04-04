@@ -21,73 +21,78 @@
 		% 1st argument: Height and width of the layer rectangle slice.
 		% 2nd argument: Depth of the layer slice
 		% 3rd argument: X Offset --> use it to offset layers from previously drawn layers.
-		% 4th argument: Options for filldraw.
-		% 5th argument: Text to be placed below this layer.
-		% 6th argument: Y Offset --> Use it when an output needs to be fed to multiple layers that are on the same X offset.
+		% 4th argument: Y Offset --> Use it when an output needs to be fed to multiple layers that are on the same X offset.
+		% 5th argument: Z Offset -
+		% 6th argument: Options for filldraw.
+		% 7th argument: Text to be placed below this layer.
+		% 8th argument: "start" when you want to reset the offset counter
 
-		\newcommand{\networkLayer}[7]{
+		\newcommand{\networkLayer}[8]{
 			\xdef\totalOffset{\totalOffset}
- 			\ifthenelse{\equal{#7} {start}}
- 			{\FPset{totalOffset}{0}}
- 			{}
- 			\FPeval\currentOffset{0+(totalOffset)+#3}
+ 			%\ifthenelse{\equal{#8} {start}}
+ 			%{\FPset{totalOffset}{0}}
+ 			%{}
+ 			\FPeval\currentOffset{0+(totalOffset)+(#3)}
 
-			\def\a{#1} % Used to distinguish input resolution for current layer.
+			\def\hw{#1} % Used to distinguish input resolution for current layer.
 			\def\b{0.02}
 			\def\c{#2} % Width of the cube to distinguish number of input channels for current layer.
-			\def\t{\currentOffset} % X offset for current layer.
-			\def\d{#4} % Y offset for current layer.
+			\def\x{\currentOffset} % X offset for current layer.
+			\def\y{#4} % Y offset for current layer.
+			\def\z{#5} % Z offset for current layer.
+			%\def\colourOpt{#6}
+			\def\inText{#7}
 
 			% Draw the layer body.
-			\draw[line width=0.3mm](\c+\t,0,\d) -- (\c+\t,\a,\d) -- (\t,\a,\d);                                                      % back plane
-			\draw[line width=0.3mm](\t,0,\a+\d) -- (\c+\t,0,\a+\d) node[midway,below] {#6} -- (\c+\t,\a,\a+\d) -- (\t,\a,\a+\d) -- (\t,0,\a+\d); % front plane
-			\draw[line width=0.3mm](\c+\t,0,\d) -- (\c+\t,0,\a+\d);
-			\draw[line width=0.3mm](\c+\t,\a,\d) -- (\c+\t,\a,\a+\d);
-			\draw[line width=0.3mm](\t,\a,\d) -- (\t,\a,\a+\d);
-
+			\draw[line width=0.3mm](\c+\x,0+\z,\y) -- (\c+\x,\hw+\z,\y) -- (\x,\hw+\z,\y);                                                      % back plane
+			\draw[line width=0.3mm](\x,0+\z,\hw+\y) -- (\c+\x,0+\z,\hw+\y) node[midway,below] {\inText} -- (\c+\x,\hw+\z,\hw+\y) -- (\x,\hw+\z,\hw+\y) -- (\x,0+\z,\hw+\y); % front plane
+			\draw[line width=0.3mm](\c+\x,0+\z,\y) -- (\c+\x,0+\z,\hw+\y);
+			\draw[line width=0.3mm](\c+\x,\hw+\z,\y) -- (\c+\x,\hw+\z,\hw+\y);
+			\draw[line width=0.3mm](\x,\hw+\z,\y) -- (\x,\hw+\z,\hw+\y);
+			
 			% Recolor visible surfaces
-			\filldraw[#5] (\t+\b,\b,\a+\d) -- (\c+\t-\b,\b,\a+\d) -- (\c+\t-\b,\a-\b,\a+\d) -- (\t+\b,\a-\b,\a+\d) -- (\t+\b,\b,\a+\d); % front plane
-			\filldraw[#5] (\t+\b,\a,\a-\b+\d) -- (\c+\t-\b,\a,\a-\b+\d) -- (\c+\t-\b,\a,\b+\d) -- (\t+\b,\a,\b+\d);
-
+			\filldraw[#6] (\x+\b,\b+\z,\hw+\y) -- (\c+\x-\b,\b+\z,\hw+\y) -- (\c+\x-\b,\hw-\b+\z,\hw+\y) -- (\x+\b,\hw-\b+\z,\hw+\y) -- (\x+\b,\b+\z,\hw+\y); % front plane
+			\filldraw[#6] (\x+\b,\hw+\z,\hw-\b+\y) -- (\c+\x-\b,\hw+\z,\hw-\b+\y) -- (\c+\x-\b,\hw+\z,\b+\y) -- (\x+\b,\hw+\z,\b+\y);
+			
 			% Colored slice.
-			\ifthenelse {\equal{#5} {}}
+			\ifthenelse {\equal{\inText} {}}
 			{} % Do not draw colored slice if #4 is blank.
-			{\filldraw[#5] (\c+\t,\b,\a-\b+\d) -- (\c+\t,\b,\b+\d) -- (\c+\t,\a-\b,\b+\d) -- (\c+\t,\a-\b,\a-\b+\d);} % Else, draw a colored slice.
-
+			{\filldraw[#6] (\c+\x,\b,\hw-\b+\y) -- (\c+\x,\b,\b+\y) -- (\c+\x,\hw-\b,\b+\y) -- (\c+\x,\hw-\b,\hw-\b+\y);} % Else, draw a colored slice.
+			{\filldraw[#6] (\c+\x,\b+\z,\hw-\b+\y) -- (\c+\x,\b+\z,\b+\y) -- (\c+\x,\hw-\b+\z,\b+\y) -- (\c+\x,\hw-\b+\z,\hw-\b+\y);} % Else, draw a colored slice.
+			
 			\FPeval\totalOffset{0+(currentOffset)+\c}
 		}
 
 		% INPUT
-		\node[] (input image) at (-3.75,0.5) {\includegraphics[height=30mm]{lenna.png}};
-		\networkLayer{3.0}{0.03}{0.0}{0.0}{color=gray!80}{}{start}
+		\networkLayer{3.0}{0.03}{0.0}{0.0}{0.0}{color=gray!80}{}{start}
 
 		% ENCODER
-		\networkLayer{3.0}{0.1}{0.5}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{color=white}{}{}        % S2
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{color=white}{}{}        % S2
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{color=white}{}{}        % S2
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{color=white}{}{}        % S2
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{color=white}{}{}        % S2
+		\networkLayer{3.0}{0.1}{0.5}{0.0}{0.0}{color=white}{conv}{}    % S1
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
 
 		% DECODER
-		\networkLayer{1.0}{1.5}{0.3}{0.0}{color=white}{deconv}{} % S1
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{color=white}{}{}       % S2
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{color=white}{deconv}{} % S1
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{color=white}{}{}       % S2
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{color=white}{}{}       % S1
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{color=white}{}{}       % S2
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{color=white}{}{}       % S1
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{color=white}{}{}       % S2
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{color=white}{}{}       % S1
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{color=white}{}{}       % S2
+		\networkLayer{1.0}{1.5}{0.3}{0.0}{0.0}{color=white}{deconv}{} % S1
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{deconv}{} % S1
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
 
 		% OUTPUT
-		\networkLayer{3.0}{0.05}{0.9}{0.0}{color=red!40}{}{}          % Pixelwise segmentation with classes.
-		\node[] (output image) at (18,0.5) {\includegraphics[height=30mm]{vermeer.jpg}};
+		\networkLayer{3.0}{0.05}{0.9}{0.0}{0.0}{color=red!40}{}{}          % Pixelwise segmentation with classes.
+		\networkLayer{3.0}{0.05}{-0.05}{0.0}{7.0}{color=blue!40}{For Z}{}
 
 
 	\end{tikzpicture}
