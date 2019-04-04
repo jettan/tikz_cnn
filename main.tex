@@ -32,7 +32,7 @@
  			%\ifthenelse{\equal{#8} {start}}
  			%{\FPset{totalOffset}{0}}
  			%{}
- 			\FPeval\currentOffset{0+(totalOffset)+(#3)}
+ 			 			\FPeval\currentOffset{0+(totalOffset)+(#3)}
 
 			\def\hw{#1} % Used to distinguish input resolution for current layer.
 			\def\b{0.02}
@@ -40,7 +40,6 @@
 			\def\x{\currentOffset} % X offset for current layer.
 			\def\y{#4} % Y offset for current layer.
 			\def\z{#5} % Z offset for current layer.
-			%\def\colourOpt{#6}
 			\def\inText{#7}
 
 			% Draw the layer body.
@@ -55,9 +54,8 @@
 			\filldraw[#6] (\x+\b,\hw+\z,\hw-\b+\y) -- (\c+\x-\b,\hw+\z,\hw-\b+\y) -- (\c+\x-\b,\hw+\z,\b+\y) -- (\x+\b,\hw+\z,\b+\y);
 			
 			% Colored slice.
-			\ifthenelse {\equal{\inText} {}}
+			\ifthenelse {\equal{#6} {}}
 			{} % Do not draw colored slice if #4 is blank.
-			{\filldraw[#6] (\c+\x,\b,\hw-\b+\y) -- (\c+\x,\b,\b+\y) -- (\c+\x,\hw-\b,\b+\y) -- (\c+\x,\hw-\b,\hw-\b+\y);} % Else, draw a colored slice.
 			{\filldraw[#6] (\c+\x,\b+\z,\hw-\b+\y) -- (\c+\x,\b+\z,\b+\y) -- (\c+\x,\hw-\b+\z,\b+\y) -- (\c+\x,\hw-\b+\z,\hw-\b+\y);} % Else, draw a colored slice.
 			
 			\FPeval\totalOffset{0+(currentOffset)+\c}
