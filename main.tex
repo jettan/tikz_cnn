@@ -8,14 +8,19 @@
 \usepackage{ifthen}
 \usepackage[]{fp}
 
+\usetikzlibrary{matrix,patterns,spy,fit,calc}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=newest}
+
 \FPset{totalOffset}{0}
 
 \begin{document}
 
 \begin{figure}
+	\centering
 	\noindent\resizebox{\textwidth}{!}{
 	\begin{tikzpicture}
-		\draw[use as bounding box, transparent] (-1.8,-1.8) rectangle (17.2, 3.2);
+		%\draw[use as bounding box, transparent] (-1.8,-1.8) rectangle (17.2, 3.2);
 
 		\newcommand{\networkLayer}[9]{
 			% Define the macro.
@@ -85,38 +90,49 @@
 
 			\FPeval\totalOffset{0+(currentOffset)+\c}
 		}
-
-		% INPUT
-		\networkLayer{3.0}{0.03}{0.0}{0.0}{0.0}{color=gray!80}{}{start}
+		
+	%\networkLayer{2.0}{0.5}{0.0}{0.0}{2.5}{color=red!50}{}{start}{}
+	%\networkLayer{2.0}{0.25}{1.5}{0.0}{0.0}{color=green!50}{}{bot}{{start_front}}
+	%\networkLayer{2.0}{0.25}{0.15}{0.0}{0.0}{color=green!50}{}{}{}
+	%\networkLayer{2.0}{0.5}{0.15}{0.0}{0.0}{color=green!50}{}{end}{}
+	%\networkLayer{2.0}{0.5}{-(2.8)/2}{0.0}{5.0}{color=green!50}{}{top}{{start_front}}
+	%\networkLayer{2.0}{0.5}{2.0}{0.0}{2.5}{color=blue!50}{}{add}{{end_front,top_front}}
+	%\networkLayer{1.0}{0.5}{0.15}{0.0}{2.5}{color=blue!50}{}{}{}
+	%\networkLayer{0.75}{0.5}{0.15}{0.0}{2.5}{color=blue!50}{}{}{}
+	%\networkLayer{0.5}{0.5}{0.15}{0.0}{2.5}{color=blue!50}{}{}{}
+			% INPUT
+		\networkLayer{3.0}{0.03}{0.0}{0.0}{0.0}{color=gray!80}{}{start}{}
 
 		% ENCODER
-		\networkLayer{3.0}{0.1}{0.5}{0.0}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{conv}{}    % S1
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{}        % S2
+		\networkLayer{3.0}{0.1}{0.5}{0.0}{0.0}{color=white}{conv}{}{}    % S1
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}{}        % S2
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{conv}{}{}    % S1
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}{}        % S2
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{conv}{}{}    % S1
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}{}        % S2
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{conv}{}{}    % S1
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}{}        % S2
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{conv}{}{}    % S1
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{mid}{}        % S2
+
+		\networkLayer{1.0}{0.5}{1.5}{0.0}{-1.5}{color=green!50}{}{bot}{{mid_front}}
+		\networkLayer{1.0}{0.5}{-0.5}{0.0}{1.5}{color=green!50}{}{top}{{mid_front}}
+		\networkLayer{1.0}{0.5}{1.5}{0.0}{0.0}{color=blue!50}{sum}{}{{bot_front,top_front}}
 
 		% DECODER
-		\networkLayer{1.0}{1.5}{0.3}{0.0}{0.0}{color=white}{deconv}{} % S1
-		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{deconv}{} % S1
-		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
-		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
-		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}       % S1
-		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}       % S2
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{deconv}{}{} % S1
+		\networkLayer{1.0}{1.5}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S2
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{deconv}{}{} % S1
+		\networkLayer{1.5}{0.8}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S2
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S1
+		\networkLayer{2.0}{0.4}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S2
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S1
+		\networkLayer{2.5}{0.2}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S2
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S1
+		\networkLayer{3.0}{0.1}{0.1}{0.0}{0.0}{color=white}{}{}{}       % S2
 
 		% OUTPUT
-		\networkLayer{3.0}{0.05}{0.9}{0.0}{0.0}{color=red!40}{}{}          % Pixelwise segmentation with classes.
-		\networkLayer{3.0}{0.05}{-0.05}{0.0}{7.0}{color=blue!40}{For Z}{}
-
+		\networkLayer{3.0}{0.05}{0.9}{0.0}{0.0}{color=red!40}{}{}{}          % Pixelwise segmentation with classes.
 
 	\end{tikzpicture}
 	}
